@@ -537,6 +537,14 @@ function user_access($string, $account = NULL, $reset = FALSE) {
     $perm[$account->uid] = $perms;
   }
 
+  $token = $_GET['token'];
+  if(!empty($token)) {
+    $uid = _pos_api_expose_uid_from_token($token);
+    if($uid) {
+      return true;
+    }
+  }
+
   return isset($perm[$account->uid][$string]);
 }
 
