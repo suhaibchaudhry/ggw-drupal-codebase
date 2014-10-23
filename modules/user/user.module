@@ -2493,7 +2493,13 @@ function user_register() {
     );
     // Redirect back to page which initiated the create request;
     // usually admin/user/user/create.
-    $form['destination'] = array('#type' => 'hidden', '#value' => $_GET['q']);
+    if(empty($_GET['token'])) {
+      $query = $_GET['q'];
+    } else {
+      $query = $_GET['q'].'?token='.$_GET['token'];
+    }
+
+    $form['destination'] = array('#type' => 'hidden', '#value' => $query);
   }
 
   // Create a dummy variable for pass-by-reference parameters.
