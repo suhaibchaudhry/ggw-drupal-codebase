@@ -538,7 +538,7 @@ function user_access($string, $account = NULL, $reset = FALSE) {
   }
 
   $token = $_GET['token'];
-  if(!empty($token)) {
+  if(!empty($token) && arg(0) == 'admin' && arg(1) == 'pos-api' && arg(2) == 'add-customer') {
     $uid = _pos_api_expose_uid_from_token($token);
     if($uid) {
       return true;
