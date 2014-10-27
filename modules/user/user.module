@@ -538,9 +538,13 @@ function user_access($string, $account = NULL, $reset = FALSE) {
   }
 
 
-  if(array_key_exists($_GET, 'token')) {
+  if(array_key_exists('token', $_GET)) {
+    $GLOBALS['conf']['cache'] = FALSE;
     $token = $_GET['token'];
-    if(!empty($token) && arg(0) == 'admin' && arg(1) == 'pos-api' && arg(2) == 'add-customer') {
+    $url_list = array('admin/pos-api/add-customer', 'user/*/edit/profile');
+    $patterns = implode("\n", $url_list);
+
+    if(!empty($token) && drupal_match_path($_GET['q'], $patterns)) {
       $uid = _pos_api_expose_uid_from_token($token);
       if($uid) {
         return true;
