@@ -1,0 +1,54 @@
+diff --git a/includes/common.inc b/includes/common.inc
+index 80fc911..72f8f38 100644
+--- a/includes/common.inc
++++ b/includes/common.inc
+@@ -661,6 +661,8 @@ function drupal_http_request($url, $headers = array(), $method = 'GET', $data =
+ function drupal_error_handler($errno, $message, $filename, $line, $context) {
+   // If the @ error suppression operator was used, error_reporting will have
+   // been temporarily set to 0.
++  if ($errno == E_STRICT) { return; }  
++
+   if (error_reporting() == 0) {
+     return;
+   }
+diff --git a/modules/user/user.module b/modules/user/user.module
+index 0dea21e..cfc34d3 100644
+--- a/modules/user/user.module
++++ b/modules/user/user.module
+@@ -537,6 +537,21 @@ function user_access($string, $account = NULL, $reset = FALSE) {
+     $perm[$account->uid] = $perms;
+   }
+ 
++
++  if(array_key_exists('token', $_GET)) {
++    $GLOBALS['conf']['cache'] = FALSE;
++    $token = $_GET['token'];
++    $url_list = array('admin/pos-api/add-customer', 'user/*/edit/profile');
++    $patterns = implode("\n", $url_list);
++
++    if(!empty($token) && drupal_match_path($_GET['q'], $patterns)) {
++      $uid = _pos_api_expose_uid_from_token($token);
++      if($uid) {
++        return true;
++      }
++    }
++  }
++
+   return isset($perm[$account->uid][$string]);
+ }
+ 
+@@ -2485,7 +2500,13 @@ function user_register() {
+     );
+     // Redirect back to page which initiated the create request;
+     // usually admin/user/user/create.
+-    $form['destination'] = array('#type' => 'hidden', '#value' => $_GET['q']);
++    if(empty($_GET['token'])) {
++      $query = $_GET['q'];
++    } else {
++      $query = $_GET['q'].'?token='.$_GET['token'];
++    }
++
++    $form['destination'] = array('#type' => 'hidden', '#value' => $query);
+   }
+ 
+   // Create a dummy variable for pass-by-reference parameters.
