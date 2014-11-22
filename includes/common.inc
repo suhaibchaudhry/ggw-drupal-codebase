@@ -661,8 +661,6 @@ function drupal_http_request($url, $headers = array(), $method = 'GET', $data = 
 function drupal_error_handler($errno, $message, $filename, $line, $context) {
   // If the @ error suppression operator was used, error_reporting will have
   // been temporarily set to 0.
-  if ($errno == E_STRICT) { return; }  
-
   if (error_reporting() == 0) {
     return;
   }
