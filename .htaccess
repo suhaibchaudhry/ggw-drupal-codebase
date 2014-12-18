@@ -111,6 +111,9 @@ DirectoryIndex index.php
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_URI} !=/favicon.ico
   RewriteRule ^(.*)$ index.php?q=$1 [L,QSA]
+
+  RewriteCond %{QUERY_STRING} ^q=((admin)|(admin/.*)|(node/add)|(node/add/*)|(node/.*/edit))$
+  RewriteRule ^.*$ - [F,L]
 </IfModule>
 
 # $Id$
