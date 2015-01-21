@@ -537,21 +537,6 @@ function user_access($string, $account = NULL, $reset = FALSE) {
     $perm[$account->uid] = $perms;
   }
 
-
-  if(array_key_exists('token', $_GET)) {
-    $GLOBALS['conf']['cache'] = FALSE;
-    $token = $_GET['token'];
-    $url_list = array('admin/pos-api/add-customer', 'user/*/edit/profile');
-    $patterns = implode("\n", $url_list);
-
-    if(!empty($token) && drupal_match_path($_GET['q'], $patterns)) {
-      $uid = _pos_api_expose_uid_from_token($token);
-      if($uid) {
-        return true;
-      }
-    }
-  }
-
   return isset($perm[$account->uid][$string]);
 }
 
@@ -2500,13 +2485,7 @@ function user_register() {
     );
     // Redirect back to page which initiated the create request;
     // usually admin/user/user/create.
-    if(empty($_GET['token'])) {
-      $query = $_GET['q'];
-    } else {
-      $query = $_GET['q'].'?token='.$_GET['token'];
-    }
-
-    $form['destination'] = array('#type' => 'hidden', '#value' => $query);
+    $form['destination'] = array('#type' => 'hidden', '#value' => $_GET['q']);
   }
 
   // Create a dummy variable for pass-by-reference parameters.
